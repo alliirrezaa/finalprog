@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'home/css/test.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<title>Product Detail</title>
+{% block content %}
+<body >
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-8">
+                <div>
+                    <div class="card-body" style="backdrop-filter: blur(10px);">
+                        <h1>{{product.name}}</h1>
+                        <h4 class="text-end" style="color: red">{{product.price|intcomma}}:قیمت</h4>
+                        <p>{{product.information|safe}}</p>
+                        <h5>Likes: {{product.total_like}}</h5>
+                        <h5>Dislikes: {{product.total_dislike}}</h5>
+                        {% if request.user.is_authenticated %}
+                            {% if is_like %}
+                                <a href="{% url 'home:product_like' product.id %}" class="btn btn-warning {% if is_dislike %} disabled {% endif %}">Unlike</a>
+                            {% else %}
+                                <a href="{% url 'home:product_like' product.id %}" class="btn btn-info {% if is_dislike %} disabled {% endif %}"><i class="fa fa-thumbs-up"></i></a>
+                            {% endif %}
+                            {% if is_dislike %}
+                                <a href="{% url 'home:product_dislike' product.id %}" class="btn btn-primary {% if is_like %} disabled {% endif %}">Un-dislike</a>
+                            {% else %}
+                                <a href="{% url 'home:product_dislike' product.id %}" class="btn btn-danger {% if is_like %} disabled {% endif %}" ><i class="fa fa-thumbs-down"></i></a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="card">
+                        <form method='post' action='{% url 'cart:add_cart' product.id %}'>
+                            {% csrf_token %}
+                            <input type='number' name='quantity' min=1 value=1 max={{product.amount}}>
+                            <button type='submit'><i class="fa fa-cart-plus" aria-hidden="true"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class='col-4' align="right">
+                <div class="card">
+                    <div class="demo">
+                        <ul id="lightSlider">
+                            <li data-thumb="{{product.image.url}}"> <img src="{{product.image.url}}" style="width:350px;height:260px" /> </li>
+                            {% for i in images %}
+                                <li data-thumb="{{i.image.url}}"> <img src="{{i.image.url}}" style="width:350px;height:260px" /> </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <p>{{product.extra_information|safe}}</p>
+            </div>
+            <hr>
+           <div class="row comment">
+               <div class='col-12'>
+                   <form method="post" action="{% url 'home:product_comment' product.id %}">
+                       {% csrf_token %}
+                       <div class="card mb-2" style="background-color:#C4DBEA">
+                           <div class="row">
+                               <div class="col-12">
+                                   <div class="comment-box">
+                                       <div class="comment-box">
+                                           <textarea placeholder="Comment.." name="comment" class="form-control" rows="2" required></textarea>
+                                       </div>
+                                       <div class="text-center">
+                                           <button type="submit" class="btn btn-sm btn-danger m-2{% if not request.user.is_authenticated %} disabled{% endif %}">Post Comment</button>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </form>
+               </div>
+           </div> 
+
+           {% for cm in comment %}
+            <div class="card w-100 h-25 mb-2" style="background-color: #F2F3DD;">
+                <div class="row mt-2">
+                    <img src="{{cm.user.profile.profile_image.url}}" style="width:80px;height:55px" alt="" class="img-fluid rounded-circle">
+                    <div class="col-7 mt-3">
+                        <h5>{{cm.user.username}}:</h5>
+                    </div>
+                    <div class="col-5 ">
+                        <p>{{cm.date}}</p>
+                    </div>
+                </div>
+                <div class="row ms-2">
+                    <h6>{{cm.comment}}</h6>
+                </div>
+                <form method="post" action="{% url 'home:reply_comment' product.id cm.id %}">
+                    {% csrf_token %}
+                    <textarea name="comment" id="comment" placeholder="reply.." class="form-control" rows="2"></textarea>
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-info btn-sm m-2{% if not request.user.is_authenticated %} disabled{% endif %}">Reply</button>
+                    </div>
+                </form>
+                {% for data in cm.comment_reply.all %}
+                    <div class="row h-25 m-2">
+                        <div class="col-8">
+                            <h6>{{data.user.username}}:</h6>
+                        </div>
+                        <div class="col-4 ">
+                            {{data.date}}
+                        </div>
+                        <div class="row m-2">
+                            <h6>{{data.comment}}</h6>
+                        </div><hr>
+                    </div>
+                {% endfor %}
+            </div>
+           {% endfor %}
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
+<script src='https://sachinchoolur.github.io/lightslider/dist/js/lightslider.js'></script>
+<script>
+    $('#lightSlider').lightSlider({
+        gallery: true,
+        item: 1,
+        loop: true,
+        slideMargin: 0,
+        thumbItem: 9
+    });
+</script>
+
+{% endblock content %}

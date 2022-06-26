@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load humanize %}
+<title>Product</title>
+{% block content %}
+<body>
+<div class="row row-cols-2">
+    {% for produc in products %}
+        <div class="container">
+                <div class="card" style="width: 12rem;">
+                    <img style="width:190px;height:180px" src="{{produc.image.url}}"  class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="card-title">{{produc.name}}</h5>
+                            <h6 class="card-text" style="color: green">Price: {{produc.price|intcomma}}</h6>
+                            <a class="btn btn-primary" href="{% url 'home:product_detail' produc.id %}">
+                                Detail
+                            </a>
+                        </div>
+                </div>
+        </div>
+    {% endfor %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if products.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">{{products.previous_page_number}}</a></li>
+            {% endif %}
+            <li class="page-item {% if page_num == page_num %} active {% endif %}"><a class="page-link" href="?page={{products.number}}">{{products.number}}</a></li>
+            {% if products.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">{{products.next_page_number}}</a></li>    
+                <li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Next</a></li>
+            {% endif %}
+        </ul>
+      </nav>
+</div>
+</body>
+{% endblock content %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+<title>Product Detail</title>
+{% block content %}
+<body >
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-6">
+                <div>
+                    <div class="card-body" style="backdrop-filter: blur(10px);">
+                        <h1>{{product.name}}</h1>
+                        <h4 class="text-end" style="color: red">{{product.price}}:قیمت</h4>
+                        <p>{{product.information|safe}}</p>
+                        <h5>Likes:{{product.total_like}}</h5>
+                        <h5>Dislikes:{{product.total_dislike}}</h5>
+                        {% if request.user.is_authenticated %}
+                            {% if is_like %}
+                                <a href="{% url 'home:product_like' product.id %}" class="btn btn-warning {% if is_dislike %} disabled {% endif %}">Unlike</a>
+                            {% else %}
+                                <a href="{% url 'home:product_like' product.id %}" class="btn btn-info {% if is_dislike %} disabled {% endif %}">like</a>
+                            {% endif %}
+                            {% if is_dislike %}
+                                <a href="{% url 'home:product_dislike' product.id %}" class="btn btn-primary {% if is_like %} disabled {% endif %}">Un-dislike</a>
+                            {% else %}
+                                <a href="{% url 'home:product_dislike' product.id %}" class="btn btn-danger {% if is_like %} disabled {% endif %}" >Dislike</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class='col-6' align="right">
+                <img src="{{product.image.url}}" style="width:250px;height:250px" alt="" >
+            </div>
+            <hr>
+            <div>
+                <p>{{product.extra_information|safe}}</p>
+            </div>
+            <hr>
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-6">
+                        <div>
+                            <div>
+                                <form method="post" action="{% url 'home:product_comment' product.id %}">
+                                    {% csrf_token %}
+                                    {{comment_form.as_p}}
+                                    <button type="submit" class="btn btn-primary btn-sm {% if not request.user.is_authenticated %} disabled {% endif %}">Post comment</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="col-6 bg-dark text-white" align="left">
+                            {% for cm in comment %}
+                            <div class="d-flex flex-start">
+                                <div class="flex-grow-1 flex-shrink-1">
+                                    <div class="d-flex justify-content-between">
+                                    <h5>
+                                        {{cm.user.username}} <span class="small"><h6>{{cm.date}}</h6></span>
+                                    </div>
+                                    <h6 class="small p-2">
+                                        {{cm.comment}}<hr>
+                                    </h6>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+{% endblock content %}

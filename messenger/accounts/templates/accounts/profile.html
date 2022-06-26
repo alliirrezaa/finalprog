@@ -1,0 +1,28 @@
+<title>Profile</title>
+{% extends 'base.html' %}
+{% block title %}Profile{%endblock title%}
+{% block content %}
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <h1 class="text-center" style="color: goldenrod">Profile</h1><br></br><br></br>
+        <div class="col-6">
+            <div>
+                <div class="card-body" style="backdrop-filter: blur(10px);">
+                    <h4 style="color: black;">User: {{profile.user.username}}</h4>
+                    <h4 style="color: black;">First Name: {{profile.user.first_name}}</h4>
+                    <h4 style="color: black;">Last Name: {{profile.user.last_name}}</h4>
+                    <h4 style="color: black;">Email: {{profile.user.email}}</h4>
+                    <h4 style="color: black;">Phone: {{profile.Phone}}</h4>
+                    <a style="color:black;" href="{% url 'accounts:update' %}">Update Profile</a>
+                    <br><a style="color:black;" href="{% url 'accounts:change' %}">Change Password</a></br>
+                </div>
+            </div>
+        </div>
+        <div class='col-6'>
+            <img src="{{profile.profile_image.url}}" style="width:250px;height:250px" alt="" class="img-fluid rounded-circle">
+        </div>
+    </div>
+</div>
+</body>
+{% endblock content %}

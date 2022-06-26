@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+<title>Payment</title>
+{% block content %}
+<h5 >payment function.....</h5><br><br><br>
+<div style="width:100px;" align="end">
+    <a href="{% url 'order:factor' order.id %}" class="btn btn-outline-primary pull-right" >Show Factor</a>
+</div>
+<br><br><br><br><br><br><br>
+{% endblock %}
